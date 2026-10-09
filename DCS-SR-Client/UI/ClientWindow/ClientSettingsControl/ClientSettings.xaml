@@ -28,7 +28,7 @@
                                        Text="本版不自动检查或安装更新；只有点击按钮才会访问所选来源。" />
                             <Button x:Name="ManualUpdateButton" Content="检查更新…" Click="ManualUpdateClick"
                                     HorizontalAlignment="Left" MinWidth="110" />
-                            <TextBlock x:Name="ManualUpdateStatus" Margin="0,8,0,0" TextWrapping="Wrap" />
+                            <TextBlock x:Name="ManualUpdateStatus" Margin="0,8,0,0" TextWrapping="Wrap" Text="尚未检查" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.AutoConnectHeader}">
