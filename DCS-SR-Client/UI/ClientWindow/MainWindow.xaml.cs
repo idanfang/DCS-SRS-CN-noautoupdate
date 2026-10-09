@@ -55,7 +55,7 @@ public partial class MainWindow : MetroWindow
         Left = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientX).DoubleValue;
         Top = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientY).DoubleValue;
 
-        Title = Title + " - " + UpdaterChecker.VERSION;
+        Title = Title + " - " + UpdaterChecker.VERSION + " / cn.1（手动更新版）";
 
         if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartMinimised))
         {
