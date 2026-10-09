@@ -45,7 +45,21 @@ public class UpdaterChecker
         }
     }
 
-    public const string MANUAL_RELEASE_TAG = "v2.4.1.0-cn.1";
+    public static string MANUAL_RELEASE_TAG => GetInstalledManualReleaseTag(
+        Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..")));
+
+    public static string GetInstalledManualReleaseTag(string root)
+    {
+        var path = Path.Combine(root, "release-manifest.json");
+        if (!File.Exists(path)) return VERSION == "2.4.1.0" ? "v2.4.1.0-cn.1" : null;
+        try
+        {
+            using var manifest = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
+            var tag = manifest.RootElement.GetProperty("tag").GetString();
+            return System.Text.RegularExpressions.Regex.IsMatch(tag ?? "", @"^v\d+\.\d+\.\d+\.\d+-cn\.[1-9]\d*$") ? tag : null;
+        }
+        catch { return null; } // A damaged manifest must not report an up-to-date install.
+    }
 
     // Retain this API for server callers, without any background network request.
     public Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
@@ -82,6 +96,7 @@ public class UpdaterChecker
         };
         info.ArgumentList.Add(upstream ? "-source=upstream" : "-source=cn");
         info.ArgumentList.Add("-tag=" + tag);
+        info.ArgumentList.Add("-path=" + Path.GetDirectoryName(path));
         return Process.Start(info) != null;
     }
 

@@ -40,11 +40,13 @@ public partial class MainWindow : Window
     private DateTime _lastProgressAt = DateTime.UtcNow;
 
     private string changelogURL = "";
+    private string _expectedSha256;
 
     public MainWindow()
     {
         InitializeComponent();
-        if (!Environment.GetCommandLineArgs().Any(arg => arg.StartsWith("-tag=")))
+        if (!Environment.GetCommandLineArgs().Any(arg => arg.StartsWith("-tag=") && arg.Length > 5)
+            || !Environment.GetCommandLineArgs().Any(arg => arg == "-source=cn" || arg == "-source=upstream"))
         {
             MessageBox.Show("请在 SRS“高级设置 → 全局设置”中选择来源并点击更新按钮。", "手动更新");
             Close();
@@ -66,7 +68,7 @@ public partial class MainWindow : Window
         }
         catch (Exception exception)
         {
-            ShowError();
+            ShowError(exception.Message);
         }
     }
 
@@ -77,19 +79,6 @@ public partial class MainWindow : Window
                 return true;
 
         return false;
-    }
-
-    private void QuitSimpleRadio()
-    {
-        foreach (var clsProcess in Process.GetProcesses())
-            if (clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-server") ||
-                clsProcess.ProcessName.ToLower().Trim().StartsWith("srs-server") ||
-                clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-client"))
-            {
-                clsProcess.Kill();
-                clsProcess.WaitForExit(5000);
-                clsProcess.Dispose();
-            }
     }
 
     private bool IsAnotherRunning()
@@ -171,9 +160,21 @@ public partial class MainWindow : Window
         if (tagArgument == null) throw new InvalidOperationException("请从高级设置 → 全局设置中发起手动更新。");
         var release = await githubClient.Repository.Release.Get(GITHUB_USERNAME, GITHUB_REPOSITORY, tagArgument.Substring(5));
         var asset = release.Assets.FirstOrDefault(item =>
-            item.Name.StartsWith("DCS-SimpleRadioStandalone", StringComparison.OrdinalIgnoreCase)
-            && item.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
+            item.Name.Equals("DCS-SimpleRadioStandalone-" + release.TagName.TrimStart('v') + ".zip", StringComparison.OrdinalIgnoreCase));
         if (asset == null) throw new InvalidOperationException("该版本未提供安装包。");
+        if (GITHUB_USERNAME == "idanfang")
+        {
+            var sums = release.Assets.SingleOrDefault(item => item.Name == "SHA256SUMS.txt");
+            if (sums == null) throw new InvalidDataException("发行缺少 SHA256SUMS.txt。");
+            using var checksumClient = new System.Net.Http.HttpClient();
+            checksumClient.DefaultRequestHeaders.UserAgent.ParseAdd(GITHUB_USER_AGENT);
+            var text = await checksumClient.GetStringAsync(sums.BrowserDownloadUrl);
+            var entries = text.Split('\n').Select(line => line.Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries));
+            var digest = entries.SingleOrDefault(parts => parts.Length == 2 && parts[1] == asset.Name);
+            if (digest == null || !System.Text.RegularExpressions.Regex.IsMatch(digest[0], "^[a-fA-F0-9]{64}$"))
+                throw new InvalidDataException("安装包校验信息无效。");
+            _expectedSha256 = digest[0];
+        }
         changelogURL = release.HtmlUrl;
         Status.Content = "正在下载 " + release.TagName;
         return new Uri(asset.BrowserDownloadUrl);
@@ -228,10 +229,10 @@ public partial class MainWindow : Window
         return false;
     }
 
-    public void ShowError()
+    public void ShowError(string detail = null)
     {
         MessageBox.Show(
-            $"手动更新失败，请检查网络连接后重试。\n\n也可从所选来源的发布页手动下载完整 ZIP 安装包，解压全部文件，再运行 installer.exe。\n\nhttps://github.com/{GITHUB_USERNAME}/{GITHUB_REPOSITORY}/releases",
+            $"手动更新未完成：{detail ?? "请检查网络或安装包后重试。"}\n\n也可从所选来源的发布页手动下载完整 ZIP 安装包，解压全部文件，再运行 installer.exe。\n\nhttps://github.com/{GITHUB_USERNAME}/{GITHUB_REPOSITORY}/releases",
             "手动更新失败",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
@@ -244,6 +245,7 @@ public partial class MainWindow : Window
         try
         {
             _uri = await GetPathToLatestVersion();
+            if (_cancel) return;
 
             if (_uri == null) Environment.Exit(0);
 
@@ -266,7 +268,7 @@ public partial class MainWindow : Window
         }
         catch (Exception exception)
         {
-            ShowError();
+            ShowError(exception.Message);
         }
     }
 
@@ -289,21 +291,34 @@ public partial class MainWindow : Window
 
     private void DownloadComplete(object sender, AsyncCompletedEventArgs e)
     {
+        try { CompleteDownload(e); }
+        catch (Exception ex) { if (!_cancel) ShowError(ex.Message); }
+    }
+
+    private void CompleteDownload(AsyncCompletedEventArgs e)
+    {
         _finished = true;
         _progressCheckTimer?.Stop();
         if (_cancel || e.Cancelled) return;
-        if (e.Error != null) { ShowError(); return; }
+        if (e.Error != null) { ShowError(e.Error.Message); return; }
         if (!_cancel)
         {
             try
             {
+                if (_expectedSha256 != null)
+                {
+                    using var stream = File.OpenRead(_file);
+                    var actual = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(stream));
+                    if (!actual.Equals(_expectedSha256, StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidDataException("安装包 SHA256 不匹配。");
+                }
                 ZipFile.ExtractToDirectory(_file, Path.Combine(_directory, "extract"));
                 if (!File.Exists(Path.Combine(_directory, "extract", "installer.exe")))
                     throw new InvalidDataException("安装包中缺少 installer.exe。");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ShowError();
+                ShowError(ex.Message);
                 return;
             }
 
@@ -311,11 +326,15 @@ public partial class MainWindow : Window
 
             if (!ServerInstall())
             {
-                while (IsDCSRunning())
+                if (IsDCSRunning())
+                {
                     MessageBox.Show(
-                        "无法安装 SRS。请先关闭 DCS，再点击确定。",
+                        "本次安装未开始。请先关闭 DCS，再从设置重新发起更新。",
                         "请关闭 DCS",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Close();
+                    return;
+                }
 
                 var releaseNotes = MessageBox.Show(
                     "是否查看版本说明？建议安装前阅读版本说明。",
@@ -329,25 +348,20 @@ public partial class MainWindow : Window
                 }
             }
 
-            QuitSimpleRadio();
             var procInfo = new ProcessStartInfo();
             procInfo.WorkingDirectory = Path.Combine(_directory, "extract");
-            if (ServerInstall())
-            {
-                procInfo.Arguments = "-autoupdate";
-                procInfo.Arguments += " -server ";
-                procInfo.Arguments += " -path=\"" + ServerPath() + "\"";
-
-                if (ShouldRestart()) procInfo.Arguments += " -restart ";
-            }
-            else
-            {
-                procInfo.Arguments = "-autoupdate";
-            }
+            // Open the installer for explicit review; never silently use a registry target.
+            if (GITHUB_USERNAME == "idanfang" && !string.IsNullOrWhiteSpace(ServerPath()))
+                procInfo.ArgumentList.Add("-path=" + Path.GetFullPath(ServerPath()));
+            if (GITHUB_USERNAME == "ciribob")
+                MessageBox.Show("英文安装器可能读取旧安装位置，并结束其他 SRS 实例。请先自行退出 SRS，并在安装器中核对安装目录和 DCS 脚本选项。", "切换英文原版", MessageBoxButton.OK, MessageBoxImage.Warning);
 
             procInfo.FileName = Path.Combine(Path.Combine(_directory, "extract"), "installer.exe");
             procInfo.UseShellExecute = false;
-            var installerProcess = Process.Start(procInfo);
+            if (_cancel) return;
+            Process installerProcess;
+            try { installerProcess = Process.Start(procInfo); }
+            catch (Exception ex) { ShowError(ex.Message); return; }
 
             if (WaitInstaller() && installerProcess != null)
             {

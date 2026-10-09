@@ -1,18 +1,12 @@
 name: Chinese installer release
 on:
   push:
-    branches: [localize-2.4.1.0]
-    paths:
-      - '.github/workflows/cn-release.yml'
-      - 'tools/build_cn_release.py'
-      - 'tools/verify_cn_release.py'
     tags: ['v*-cn.*']
   workflow_dispatch:
     inputs:
       tag:
         description: Existing Chinese release tag to build
         required: true
-        default: v2.4.1.0-cn.1
 permissions:
   contents: write
 concurrency:
@@ -37,15 +31,29 @@ jobs:
           REF_TYPE: ${{ github.ref_type }}
           REF_NAME: ${{ github.ref_name }}
         run: |
-          $tag = 'v2.4.1.0-cn.1'
+          $tag = ''
           if ($env:INPUT_TAG) { $tag = $env:INPUT_TAG }
           elseif ($env:REF_TYPE -eq 'tag') { $tag = $env:REF_NAME }
+          if (-not $tag) { throw 'Specify an existing release tag' }
           if ($tag -notmatch '^v\d+\.\d+\.\d+\.\d+-cn\.\d+$') { throw 'Invalid release tag' }
           "tag=$tag" >> $env:GITHUB_OUTPUT
+      - name: Require a new Release with no existing installer assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          $json = gh release view $env:RELEASE_TAG -R idanfang/DCS-SRS-CN-noautoupdate --json assets
+          if ($LASTEXITCODE -ne 0) { throw 'Create the Release for this immutable tag before packaging' }
+          $release = $json | ConvertFrom-Json
+          if ($release.assets | Where-Object { $_.name -like 'DCS-SimpleRadioStandalone*.zip' -or $_.name -eq 'SHA256SUMS.txt' }) {
+            throw 'Existing installer assets are immutable; create a new Chinese revision tag'
+          }
       - name: Checkout immutable released source
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
           path: source
           persist-credentials: false
       - uses: actions/setup-dotnet@v4
@@ -54,6 +62,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Test release tooling offline
+        run: python automation/tools/test_release_tools.py
       - name: Test released source
         working-directory: source
         run: dotnet test DCS-SR-CommonTests/DCS-SR-CommonTests.csproj -c Release --nologo

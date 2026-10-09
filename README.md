@@ -1,3 +1,5 @@
+> 中文手动更新版的首次安装、迁入和后续升级请阅读 [安装与手动更新](docs/安装与手动更新.md)。下载 Release 的完整安装 ZIP，不能使用 GitHub 源码 ZIP/TAR 或单独的 SRS-AutoUpdater.exe 安装。历史 cn.1 Release 保留原有内容；后续修订的逻辑修复与验证范围见 [审查记录](docs/逻辑审查与修复-20261009.md)。
+
 # DCS-SRS-CN-noautoupdate
 
 基于原作者 **2.4.1.0** 源码的中文手动更新版，为中国 DCS 用户提供完整中文界面。中文词条参考 [omltcat/DCS-SRS-CN](https://github.com/omltcat/DCS-SRS-CN)，保留 2.4.1.0 的功能实现。

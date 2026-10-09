@@ -44,11 +44,13 @@ for path,app in apps:
     checked+=1
  checks.append({'app':path,'bundle_entries':len(entries),'dependency_entries_checked':checked,'runtimeconfig':json.loads(entries[app+'.runtimeconfig.json'])})
  assert not any(Path(n).suffix.lower() in {'.ttf','.ttc','.otf','.woff','.woff2','.fon','.fnt','.compositefont'} for n in entries)
-asset=BASE/'assets/DCS-SimpleRadioStandalone-2.4.1.0-cn.1.zip'
+asset=BASE/('assets/DCS-SimpleRadioStandalone-'+m['tag'].removeprefix('v')+'.zip')
+assert not (BASE/'assets/SRS-AutoUpdater.exe').exists(),'Updater is internal, not a standalone release asset'
 with zipfile.ZipFile(asset) as z:
  assert z.testzip() is None
- assert 'Installer.exe' in z.namelist() and 'Client/SR-ClientRadio.exe' in z.namelist()
+ assert all(n in z.namelist() for n in ['Installer.exe','SRS-AutoUpdater.exe','Client/SR-ClientRadio.exe'])
  assert all(hashlib.sha256(z.read(n)).hexdigest()==digest for n,digest in m['payload_sha256'].items())
+assert (BASE/'assets/SHA256SUMS.txt').read_text(encoding='ascii') == hashlib.sha256(asset.read_bytes()).hexdigest()+'  '+asset.name+'\n','Public checksum mismatch'
 report={'status':'passed','commit':m['commit'],'tag':m['tag'],'zip_sha256':hashlib.sha256(asset.read_bytes()).hexdigest(),'source_files':len(m['source_sha256']),'payload_files':len(m['payload_sha256']),'root_installer_layout':True,'bundled_dependency_checks':checks,'font_files':[],'not_tested':m['not_tested'],'known_unfixed':m['known_unfixed']}
 (BASE/'verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps({k:v for k,v in report.items() if k!='bundled_dependency_checks'},ensure_ascii=False,indent=2))

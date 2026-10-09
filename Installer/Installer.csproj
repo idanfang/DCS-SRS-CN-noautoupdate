@@ -112,4 +112,7 @@
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\Helpers\InstallationSafety.cs" Link="InstallationSafety.cs" />
+  </ItemGroup>
 </Project>

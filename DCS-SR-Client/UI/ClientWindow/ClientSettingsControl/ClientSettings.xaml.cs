@@ -39,8 +39,9 @@ public partial class ClientSettings : UserControl
         try
         {
             var release = await UpdaterChecker.Instance.GetManualReleaseAsync(upstream);
-            if (!release.Assets.Any(asset => asset.Name.StartsWith("DCS-SimpleRadioStandalone", StringComparison.OrdinalIgnoreCase)
-                && asset.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)))
+            if ((!upstream && !System.Text.RegularExpressions.Regex.IsMatch(release.TagName, @"^v\d+\.\d+\.\d+\.\d+-cn\.[1-9]\d*$")) ||
+                !release.Assets.Any(asset => asset.Name.Equals("DCS-SimpleRadioStandalone-" + release.TagName.TrimStart('v') + ".zip", StringComparison.OrdinalIgnoreCase)) ||
+                (!upstream && !release.Assets.Any(asset => asset.Name == "SHA256SUMS.txt")))
             {
                 ManualUpdateStatus.Text = "该来源尚未提供可安装的发行包。";
                 return;
@@ -56,7 +57,7 @@ public partial class ClientSettings : UserControl
             var warning = upstream
                 ? "\n\n注意：安装英文原版将覆盖汉化与本项目的手动更新功能。原版可能恢复自动更新。"
                 : "";
-            if (MessageBox.Show($"来源：{sourceName}\n版本：{release.TagName}\n\n{notes}{warning}\n\n是否下载并安装？安装前请关闭 DCS。",
+            if (MessageBox.Show($"来源：{sourceName}\n版本：{release.TagName}\n当前中文修订：{UpdaterChecker.MANUAL_RELEASE_TAG}\n\n{notes}{warning}\n\n是否下载并安装？安装前请关闭 DCS。",
                 "手动更新", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes) return;
             if (Process.GetProcessesByName("DCS").Length > 0)
             {

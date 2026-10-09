@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -60,7 +61,8 @@ namespace Installer
             //allows click and drag anywhere on the window
             containerPanel.MouseLeftButtonDown += GridPanel_MouseLeftButtonDown;
 
-            var srPathStr = ReadPath("SRPathStandalone");
+            var srPathStr = ServerPath();
+            if (string.IsNullOrWhiteSpace(srPathStr)) srPathStr = ReadPath("SRPathStandalone");
             if (srPathStr != "")
             {
                 srPath.Text = srPathStr;
@@ -105,48 +107,8 @@ namespace Installer
                 return;
             }
 
-            new Action(async () =>
-            {
-                await Task.Delay(1).ConfigureAwait(false);
-
-                if (((App)Application.Current).Arguments.Length > 0)
-                {
-                    if (IsAutoUpdate() && !IsSilentServer())
-                    {
-                        Application.Current.Dispatcher?.Invoke(() =>
-                            {
-                                Logger.Info("Silent Installer Running");
-                                var result = MessageBox.Show(
-                                    Properties.Resources.MsgBoxChangeText,
-                                    Properties.Resources.MsgBoxChange,
-                                    MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                                if (result == MessageBoxResult.Yes)
-                                {
-                                }
-                                else
-                                {
-                                    InstallScriptsCheckbox.IsChecked = true;
-                                    InstallReleaseButton(null, null);
-                                }
-                            }
-                        ); //end-invoke
-                    }
-                    else if (IsAutoUpdate() && IsSilentServer())
-                    {
-                        Application.Current.Dispatcher?.Invoke(() =>
-                            {
-                                var path = ServerPath();
-                                Logger.Info("Silent Server Installer Running - " + path);
-
-                                srPath.Text = path;
-                                InstallScriptsCheckbox.IsChecked = false;
-                                InstallReleaseButton(null, null);
-                            }
-                        ); //end-invoke
-                    }
-                }
-            }).Invoke();
+            // Always let the user review the destination and DCS script options.
+            // A command-line target takes precedence over the legacy registry value.
         }
 
         private bool IsAutoUpdate()
@@ -300,6 +262,9 @@ namespace Installer
                 }
             }
 
+            if (MessageBox.Show($"安装目标：{srPath.Text}\nDCS 脚本位置：{dcScriptsPath ?? "不安装脚本"}\n\n现有程序文件将被覆盖。请确认目录并先备份配置。是否继续？",
+                "确认安装位置", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+
             InstallButton.IsEnabled = false;
             RemoveButton.IsEnabled = false;
 
@@ -358,7 +323,9 @@ namespace Installer
         {
             try
             {
-                QuitSimpleRadio();
+                if (!InstallationSafety.IsValidTarget(srPath, _currentDirectory))
+                    throw new IOException("请选择独立安装目录，不能使用磁盘根目录、安装包目录或其父子目录。");
+                EnsureSimpleRadioClosed(srPath);
 
                 var paths = new List<string>();
                 if (dcsScriptsPath != null)
@@ -414,6 +381,11 @@ namespace Installer
                 }
 
                 InstallVCRedist();
+                // Commit the revision marker only after program files have copied successfully.
+                if (File.Exists(Path.Combine(_currentDirectory, "release-manifest.json")))
+                    File.Copy(Path.Combine(_currentDirectory, "release-manifest.json"), Path.Combine(srPath, "release-manifest.json"), true);
+                else
+                    DeleteFileIfExists(Path.Combine(srPath, "release-manifest.json"));
 
                 if (dcsScriptsPath != null)
                 {
@@ -452,6 +424,8 @@ namespace Installer
             catch (Exception ex)
             {
                 Logger.Error(ex, "Error Running Installer");
+                MessageBox.Show(ex.Message, "安装未完成", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (ex is IOException) return 0;
 
 
                 return -1;
@@ -659,24 +633,27 @@ namespace Installer
             }
         }
 
-        private void QuitSimpleRadio()
+        private void EnsureSimpleRadioClosed(string target)
         {
-            Logger.Info($"Closing SRS Client & Server");
-#if !DEBUG
-            foreach (var clsProcess in Process.GetProcesses())
+            foreach (var process in Process.GetProcesses())
             {
-                if (clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-server") ||
-                    clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-client"))
+                using (process)
                 {
-                    Logger.Info($"Found & Terminating {clsProcess.ProcessName}");
-                    clsProcess.Kill();
-                    clsProcess.WaitForExit(5000);
-                    clsProcess.Dispose();
+                    var name = process.ProcessName;
+                    if (!(name.StartsWith("sr-client", StringComparison.OrdinalIgnoreCase) ||
+                          name.StartsWith("sr-server", StringComparison.OrdinalIgnoreCase) ||
+                          name.StartsWith("srs-server", StringComparison.OrdinalIgnoreCase) ||
+                          name.Equals("DCS-SR-ExternalAudio", StringComparison.OrdinalIgnoreCase))) continue;
+                    string executable;
+                    try { executable = process.MainModule?.FileName; }
+                    catch (Exception ex)
+                    {
+                        throw new IOException("无法核实 SRS 进程位置，请自行退出 SRS 后重试。", ex);
+                    }
+                    if (executable != null && InstallationSafety.IsInside(executable, target))
+                        throw new IOException("目标目录中的 SRS 仍在运行，请自行退出后重试：" + executable);
                 }
             }
-
-            Logger.Info($"Closed SRS Client & Server");
-#endif
         }
 
         private bool IsDCSRunning()
@@ -1135,7 +1112,7 @@ namespace Installer
         {
             try
             {
-                QuitSimpleRadio();
+                EnsureSimpleRadioClosed(srPath);
                 Application.Current.Dispatcher.Invoke(() =>
                     {
                         InstallButton.IsEnabled = false;
