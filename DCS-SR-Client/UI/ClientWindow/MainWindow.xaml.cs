@@ -76,42 +76,7 @@ public partial class MainWindow : MetroWindow
 
         FavouriteServersView.DataContext = ((MainWindowViewModel)DataContext).FavouriteServersViewModel;
 
-        //TODO make this a singleton with a callback to check for updates
-        _ = UpdaterChecker.Instance.CheckForUpdateAsync(
-            _globalSettings.GetClientSettingBool(GlobalSettingsKeys.CheckForBetaUpdates),
-            result =>
-            {
-                if (result.UpdateAvailable)
-                {
-                    var choice = MessageBox.Show(
-                        $"{Common.Properties.Resources.MsgBoxUpdate1} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate2} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate3}\n\n{Common.Properties.Resources.MsgBoxUpdate4}",
-                        Common.Properties.Resources.MsgBoxUpdateTitle, MessageBoxButton.YesNoCancel,
-                        MessageBoxImage.Information);
-
-                    if (choice == MessageBoxResult.Yes)
-                    {
-                        try
-                        {
-                            UpdaterChecker.Instance.LaunchUpdater(result.Beta);
-                        }
-                        catch (Exception)
-                        {
-                            MessageBox.Show($"{Common.Properties.Resources.MsgBoxUpdateFailed}",
-                                Common.Properties.Resources.MsgBoxUpdateFailedTitle, MessageBoxButton.YesNoCancel,
-                                MessageBoxImage.Information);
-
-                            Process.Start(new ProcessStartInfo(result.Url)
-                                { UseShellExecute = true });
-                        }
-                    }
-                    else if (choice == MessageBoxResult.No)
-                    {
-                        Process.Start(new ProcessStartInfo(result.Url)
-                            { UseShellExecute = true });
-                    }
-                }
-            });
-
+        // Updates are initiated only from the existing settings tab.
 
         //TODO move this
         UpdatePresetsFolderLabel();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -22,9 +22,9 @@ namespace AutoUpdater;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public static readonly string GITHUB_USERNAME = "ciribob";
+    public static readonly string GITHUB_USERNAME = Environment.GetCommandLineArgs().Contains("-source=cn") ? "idanfang" : "ciribob";
 
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
+    public static readonly string GITHUB_REPOSITORY = Environment.GetCommandLineArgs().Contains("-source=cn") ? "DCS-SRS-CN-noautoupdate" : "DCS-SimpleRadioStandalone";
 
     // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
     public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
@@ -42,7 +42,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        QuitSimpleRadio();
+        if (!Environment.GetCommandLineArgs().Any(arg => arg.StartsWith("-tag=")))
+        {
+            MessageBox.Show("请在 SRS 通用设置中选择来源并点击检查更新。", "手动更新");
+            Close();
+            return;
+        }
+
         if (IsAnotherRunning())
         {
             MessageBox.Show("Please close DCS-SimpleRadio Standalone before running", "SRS Auto Updater",
@@ -158,48 +164,18 @@ public partial class MainWindow : Window
         Status.Content = "Finding Latest SRS Version";
         var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, "1.0.0.0"));
 
-        var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
-
-        var release = FindRightRelease(releases);
-        var releaseAsset = release.Assets.First();
-
-        foreach (var asset in release.Assets)
-            if (asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
-                asset.Name.ToLower().Contains(".zip"))
-            {
-                changelogURL = release.HtmlUrl;
-                Status.Content = "Downloading Version " + release.TagName;
-
-                if (ServerInstall())
-                {
-                    //check the path and version
-                    var path = ServerPath();
-
-                    if (path.Length > 0)
-                    {
-                        var latestVersion = new Version(release.TagName.Replace("v", ""));
-                        var serverExe = Path.Combine(path,"Server", "SRS-Server.exe");
-                        var useThisVersion = true;
-                        if (Path.Exists(serverExe))
-                        {
-                            var serverVersion = new Version(FileVersionInfo.GetVersionInfo(serverExe).FileVersion);
-                            useThisVersion = serverVersion < latestVersion;
-                        }
-                        
-
-                        if (useThisVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
-
-                        //no update
-                        return null;
-                    }
-                }
-
-                return new Uri(releaseAsset.BrowserDownloadUrl);
-            }
-        
-        return null;
+        var tagArgument = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("-tag="));
+        // No implicit latest-version download: the settings screen must select the release.
+        if (tagArgument == null) throw new InvalidOperationException("请从通用设置中发起手动更新。");
+        var release = await githubClient.Repository.Release.Get(GITHUB_USERNAME, GITHUB_REPOSITORY, tagArgument.Substring(5));
+        var asset = release.Assets.FirstOrDefault(item =>
+            item.Name.StartsWith("DCS-SimpleRadioStandalone", StringComparison.OrdinalIgnoreCase)
+            && item.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
+        if (asset == null) throw new InvalidOperationException("该版本未提供安装包。");
+        changelogURL = release.HtmlUrl;
+        Status.Content = "正在下载 " + release.TagName;
+        return new Uri(asset.BrowserDownloadUrl);
     }
-
     private bool AllowBeta()
     {
         foreach (var arg in Environment.GetCommandLineArgs())
@@ -314,6 +290,7 @@ public partial class MainWindow : Window
     private void DownloadComplete(object sender, AsyncCompletedEventArgs e)
     {
         _finished = true;
+        if (e.Cancelled || e.Error != null) { ShowError(); return; }
         if (!_cancel)
         {
             ZipFile.ExtractToDirectory(_file, Path.Combine(_directory, "extract"));
@@ -340,6 +317,7 @@ public partial class MainWindow : Window
                 }
             }
 
+            QuitSimpleRadio();
             var procInfo = new ProcessStartInfo();
             procInfo.WorkingDirectory = Path.Combine(_directory, "extract");
             if (ServerInstall())

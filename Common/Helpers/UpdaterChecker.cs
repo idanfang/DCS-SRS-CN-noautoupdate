@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -45,127 +45,44 @@ public class UpdaterChecker
         }
     }
 
-    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public const string MANUAL_RELEASE_TAG = "v2.3.8.2-cn.1";
+
+    // Retain this API for server callers, without any background network request.
+    public Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
-#if !DEBUG
-        var currentVersion = Version.Parse(VERSION);
-
-
-        try
+        updateCallback?.Invoke(new UpdateCallbackResult
         {
-            var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
+            UpdateAvailable = false,
+            Version = Version.Parse(VERSION),
+            Error = false
+        });
+        return Task.CompletedTask;
+    }
 
+    public Task<Release> GetManualReleaseAsync(bool upstream)
+    {
+        var client = new GitHubClient(new ProductHeaderValue("DCS-SRS-CN-noautoupdate", VERSION));
+        return client.Repository.Release.GetLatest(
+            upstream ? "ciribob" : "idanfang",
+            upstream ? "DCS-SimpleRadioStandalone" : "DCS-SRS-CN-noautoupdate");
+    }
 
-            var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
-
-            var latestStableVersion = new Version();
-            Release latestStableRelease = null;
-            var latestBetaVersion = new Version();
-            Release latestBetaRelease = null;
-
-            // Retrieve last stable and beta branch release as tagged on GitHub
-            foreach (var release in releases)
-            {
-                Version releaseVersion;
-
-                if (Version.TryParse(release.TagName.Replace("v", ""), out releaseVersion))
-                {
-                    if (release.Prerelease && releaseVersion > latestBetaVersion)
-                    {
-                        latestBetaRelease = release;
-                        latestBetaVersion = releaseVersion;
-                    }
-                    else if (!release.Prerelease && releaseVersion > latestStableVersion)
-                    {
-                        latestStableRelease = release;
-                        latestStableVersion = releaseVersion;
-                    }
-                }
-                else
-                {
-                    _logger.Warn($"Failed to parse GitHub release version {release.TagName}");
-                }
-            }
-
-            // Compare latest versions with currently running version depending on user branch choice
-            if (checkForBetaUpdates && latestBetaVersion > currentVersion)
-            {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = true,
-                    Branch = "beta",
-                    UpdateAvailable = true,
-                    Version = latestBetaVersion,
-                    Url = latestBetaRelease.HtmlUrl,
-                    Error = false
-                });
-            }
-            else if (latestStableVersion > currentVersion)
-            {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = false,
-                    Branch = "stable",
-                    UpdateAvailable = true,
-                    Version = latestStableVersion,
-                    Url = latestStableRelease.HtmlUrl,
-                    Error = false
-                });
-            }
-            else if (checkForBetaUpdates && latestBetaVersion == currentVersion)
-            {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = true,
-                    Branch = "beta",
-                    UpdateAvailable = false,
-                    Version = latestBetaVersion,
-                    Url = latestBetaRelease.HtmlUrl,
-                    Error = false
-                });
-                _logger.Warn($"Running latest beta version: {currentVersion}");
-            }
-            else if (latestStableVersion == currentVersion)
-            {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = false,
-                    Branch = "stable",
-                    UpdateAvailable = false,
-                    Version = latestStableVersion,
-                    Url = latestStableRelease.HtmlUrl,
-                    Error = false
-                });
-                _logger.Warn($"Running latest stable version: {currentVersion}");
-            }
-            else
-            {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = false,
-                    Branch = "stable",
-                    UpdateAvailable = false,
-                    Version = latestStableVersion,
-                    Url = latestStableRelease.HtmlUrl,
-                    Error = false
-                });
-                _logger.Warn($"Running development version: {currentVersion}");
-            }
-        }
-        catch (Exception ex)
+    public bool LaunchManualUpdater(bool upstream, string tag)
+    {
+        if (!OperatingSystem.IsWindows()) return false;
+        var location = AppDomain.CurrentDomain.BaseDirectory;
+        var path = Path.Combine(location, "SRS-AutoUpdater.exe");
+        if (!File.Exists(path)) path = Path.GetFullPath(Path.Combine(location, "../SRS-AutoUpdater.exe"));
+        if (!File.Exists(path)) return false;
+        var info = new ProcessStartInfo(path)
         {
-            _logger.Error(ex, "Failed to check for updated version");
-            updateCallback?.Invoke(new UpdateCallbackResult
-            {
-                Beta = false,
-                Branch = "unknown",
-                UpdateAvailable = false,
-                Version = null,
-                Url = null,
-                Error = true
-            });
-        }
-#endif
+            UseShellExecute = true,
+            WorkingDirectory = location,
+            Verb = "runas"
+        };
+        info.ArgumentList.Add(upstream ? "-source=upstream" : "-source=cn");
+        info.ArgumentList.Add("-tag=" + tag);
+        return Process.Start(info) != null;
     }
 
     private bool IsDCSRunning()

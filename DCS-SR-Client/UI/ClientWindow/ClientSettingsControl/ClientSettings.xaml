@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.ClientSettingsControl.ClientSettings"
+<UserControl x:Class="Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.ClientSettingsControl.ClientSettings"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,6 +14,23 @@
         <StackPanel>
             <GroupBox Header="{x:Static p:Resources.GlobalSettingsHeader}">
                 <StackPanel>
+                    <GroupBox Header="软件更新（仅手动）">
+                        <StackPanel Margin="8">
+                            <DockPanel>
+                                <Label Content="更新来源" VerticalContentAlignment="Center" />
+                                <ComboBox x:Name="ManualUpdateSource" SelectedIndex="0"
+                                          SelectionChanged="UpdateSourceChanged">
+                                    <ComboBoxItem Content="本项目中文手动更新版" />
+                                    <ComboBoxItem Content="原作者英文原版" />
+                                </ComboBox>
+                            </DockPanel>
+                            <TextBlock x:Name="ManualUpdateNotice" Margin="0,8,0,8" TextWrapping="Wrap"
+                                       Text="本版不自动检查或安装更新；只有点击按钮才会访问所选来源。" />
+                            <Button x:Name="ManualUpdateButton" Content="检查更新…" Click="ManualUpdateClick"
+                                    HorizontalAlignment="Left" MinWidth="110" />
+                            <TextBlock x:Name="ManualUpdateStatus" Margin="0,8,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.AutoConnectHeader}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -569,16 +586,7 @@
                                 Grid.Column="1"
                                 ToggleValue="{Binding AutoSelectInputProfile, Mode=TwoWay}" />
 
-                            <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.CheckForBetaUpdates}" />
 
-                            <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                ToggleValue="{Binding CheckForBetaUpdates, Mode=TwoWay}" />
 
 
                             <Label Grid.Row="2"
