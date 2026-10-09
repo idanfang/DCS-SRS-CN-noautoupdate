@@ -559,4 +559,8 @@
           <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
     </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\srs-poster.png" />
+    <Resource Include="Resources\srs-poster.png" />
+  </ItemGroup>
 </Project>

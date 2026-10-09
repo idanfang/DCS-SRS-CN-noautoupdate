@@ -14,6 +14,13 @@
                 <ResourceDictionary Source="Themes\Styles.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+            <FontFamily x:Key="MahApps.Fonts.Family.Control">Microsoft YaHei</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Button">Microsoft YaHei</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Header">Microsoft YaHei</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.ToggleSwitch">Microsoft YaHei</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.ToggleSwitch.Header">Microsoft YaHei</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Window.Title">Microsoft YaHei</FontFamily>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

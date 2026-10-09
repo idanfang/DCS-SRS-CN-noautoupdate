@@ -145,7 +145,7 @@
                                Background="Black"
                                Foreground="#00FF00"
                                Style="{x:Null}"
-                               Text="USER"
+                               Text="用户"
                                Visibility="Collapsed"
                                TextAlignment="Center"
                                TextWrapping="NoWrap" />
@@ -283,7 +283,7 @@
                             Height="20"
                             Margin="5"
                             Click="Encryption_ButtonClick"
-                            Content="Enable"
+                            Content="启用"
                             Style="{x:Null}" />
                 </WrapPanel>
 

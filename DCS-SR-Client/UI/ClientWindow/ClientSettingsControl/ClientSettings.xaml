@@ -10,10 +10,35 @@
     <UserControl.DataContext>
         <clientSettingsControl:ClientSettingsViewModel />
     </UserControl.DataContext>
-    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
         <StackPanel>
             <GroupBox Header="{x:Static p:Resources.GlobalSettingsHeader}">
                 <StackPanel>
+                    <GroupBox Header="软件更新（仅手动）">
+                        <StackPanel Margin="8">
+                            <TextBlock Margin="0,4,0,6" TextWrapping="Wrap" FontSize="12" LineHeight="20">
+                                <Run Text="本汉化版和英文原版区别：不会每次打开软件自动更新，从而避免烦人的更新提示。" />
+                                <LineBreak />
+                                <Run Text="同时提供两种软件更新源手动更新的方式，方便自己可控更新。" />
+                                <LineBreak />
+                                <Run Text="本汉化版不会跟随英文源版进行同步升级，如原版有重大更新请联系我。" />
+                                <Run Text="  QQ群：1006786675" />
+                            </TextBlock>
+                            <WrapPanel Margin="0,0,0,8" VerticalAlignment="Center">
+                                <TextBlock Text="如果本汉化版解决了你的麻烦，请在github上给我送上小星星。"
+                                           FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                <Button Content="打开Github仓库" Click="OpenRepositoryClick" MinWidth="94" />
+                            </WrapPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="UpdateEnglishButton" Content="更新英文原版" Tag="upstream"
+                                        Click="ManualUpdateClick" MinWidth="110" Margin="0,0,22,0" />
+                                <Button x:Name="UpdateChineseButton" Content="更新中文手动更新版" Tag="cn"
+                                        Click="ManualUpdateClick" MinWidth="110" />
+                            </StackPanel>
+                            <TextBlock x:Name="ManualUpdateStatus" Margin="0,8,0,0" TextWrapping="Wrap"
+                                       Visibility="Collapsed" />
+                        </StackPanel>
+                    </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.AutoConnectHeader}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -568,17 +593,6 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 ToggleValue="{Binding AutoSelectInputProfile, Mode=TwoWay}" />
-
-                            <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.CheckForBetaUpdates}" />
-
-                            <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                ToggleValue="{Binding CheckForBetaUpdates, Mode=TwoWay}" />
 
 
                             <Label Grid.Row="2"

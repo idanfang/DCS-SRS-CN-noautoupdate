@@ -22,7 +22,7 @@ public partial class InputProfileWindow : MetroWindow
         if (rename)
         {
             ProfileName.Text = initialText;
-            CreateRename.Content = "Rename";
+            CreateRename.Content = "重命名";
         }
     }
 

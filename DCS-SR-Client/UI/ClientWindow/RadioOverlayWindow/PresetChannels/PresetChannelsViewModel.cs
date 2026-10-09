@@ -258,8 +258,8 @@ public class PresetChannelsViewModel : INotifyPropertyChanged, IHandle<ProfileCh
             var path = _channelsStore.CreatePresetFile(radio.name);
             if (path != null)
             {
-                var res = MessageBox.Show($"Created presets file at path:\n {path} \n\nOpen the file?",
-                    "Created Preset File", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No);
+                var res = MessageBox.Show($"已创建频率预设文件：\n{path}\n\n是否打开此文件？",
+                    "已创建频率预设文件", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No);
                 if (res == MessageBoxResult.Yes)
                     try
                     {

@@ -28,7 +28,7 @@
                Grid.Row="0"
                Grid.Column="0"
                VerticalContentAlignment="Center"
-               Content="Control" />
+               Content="控制绑定" />
         <TextBox x:Name="Device"
                  Grid.Row="0"
                  Grid.Column="1"
@@ -57,7 +57,7 @@
                Grid.Row="1"
                Grid.Column="0"
                VerticalContentAlignment="Center"
-               Content="Control" />
+               Content="控制绑定" />
         <TextBox x:Name="ModifierDevice"
                  Grid.Row="1"
                  Grid.Column="1"

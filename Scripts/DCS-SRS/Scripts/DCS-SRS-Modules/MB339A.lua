@@ -1,5 +1,5 @@
 function exportRadioMB339A(_data, SR)
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "To enable the Intercom HotMic pull the INT knob located on ICS" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "请拉出 ICS 面板上的 INT 旋钮，以启用机内通话常开麦克风。" }
 
     local main_panel = GetDevice(0)
 

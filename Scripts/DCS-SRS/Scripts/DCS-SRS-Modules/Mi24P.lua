@@ -1,6 +1,6 @@
 function exportRadioMI24P(_data, SR)
 
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "Use Radio/ICS Switch to control Intercom Hot Mic" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "使用 Radio/ICS 开关控制机内通话常开麦克风。" }
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0

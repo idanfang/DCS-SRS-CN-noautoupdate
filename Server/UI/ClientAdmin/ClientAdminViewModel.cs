@@ -23,7 +23,7 @@ public sealed class ClientAdminViewModel : Screen, IHandle<ServerStateMessage>
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnUIThread(this);
 
-        DisplayName = "SR Client List";
+        DisplayName = "SRS 客户端列表";
 
         _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         _updateTimer.Tick += _updateTimer_Tick;

@@ -1,6 +1,6 @@
 function exportRadioC101CC(_data, SR)
 
-    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "The hot mic talk button (labeled TALK in cockpit) must be pulled out" }
+    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "请拉出座舱中标为 TALK 的通话按钮，以启用常开麦克风。" }
 
     -- TODO - figure out channels.... it saves state??
     -- figure out volume

@@ -122,9 +122,9 @@ public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSett
 
             AircraftIntercoms.Add(new AircraftIntercomModel()
             {
-                AircraftType = "None",
+                AircraftType = "无",
                 UnitId = 0,
-                PilotNames = ["Disabled"]
+                PilotNames = ["已禁用"]
             });
             foreach (var model in aircraftIntercomModels.Values)
             {

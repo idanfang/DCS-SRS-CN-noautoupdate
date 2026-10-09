@@ -51,7 +51,7 @@ public partial class App : Application
         // Common ones to use are -lang:en-us , -lang:zh , -lang:zh-cn , -lang:fr
         try
         {
-            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:"))?.Substring(6);
+            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:"))?.Substring(6) ?? "zh-CN";
             if (!string.IsNullOrEmpty(lang))
             {
                 Logger.Warn($"Command Line Set Language Code : {lang}");
@@ -74,9 +74,9 @@ public partial class App : Application
             {
                 TaskDialog.ShowDialog(new TaskDialogPage
                 {
-                    Caption = $"Installation Error!",
-                    Heading = $"You are missing the {dll}",
-                    Text = $"Reinstall using the Installer and don't move the client from the installation directory!",
+                    Caption = $"安装错误",
+                    Heading = $"缺少文件：{dll}",
+                    Text = $"请使用安装程序重新安装，并保留客户端在原安装目录中。",
                     Icon = TaskDialogIcon.Error,
                     Buttons = { TaskDialogButton.OK }
                 });
@@ -116,9 +116,9 @@ public partial class App : Application
 
                     TaskDialog.ShowDialog(new TaskDialogPage
                     {
-                        Caption = "Multiple SimpleRadio clients started!",
-                        Heading = "Another instance of the SimpleRadio client is already running!",
-                        Text = $"This one will now quit. Check your system tray for the SRS Icon",
+                        Caption = "SRS 已在运行",
+                        Heading = "已有一个 SRS 客户端正在运行。",
+                        Text = $"当前实例即将退出，请在系统托盘中找到 SRS 图标。",
                         Icon = TaskDialogIcon.Error,
                         Buttons = { TaskDialogButton.OK }
                     });
@@ -201,9 +201,9 @@ public partial class App : Application
                 {
                     await TaskDialog.ShowDialogAsync(new TaskDialogPage
                     {
-                        Caption = "UAC Error",
-                        Heading = "SRS could not restart with elevated privileges.",
-                        Text = $"Unless you have a very specific need you should disable the Require Admin option in the settings.",
+                        Caption = "权限错误",
+                        Heading = "SRS 无法以管理员权限重新启动。",
+                        Text = $"除非特殊配置确实需要管理员权限，否则请关闭设置中的“需要管理员权限”选项。",
                         Icon = TaskDialogIcon.Warning,
                         Buttons = { TaskDialogButton.OK }
                     });
@@ -287,13 +287,13 @@ public partial class App : Application
         if (_notifyIcon != null) return;
         var notifyIconContextMenuShow = new ToolStripMenuItem
         {
-            Text = "Show"
+            Text = "显示"
         };
         notifyIconContextMenuShow.Click += NotifyIcon_Show;
 
         var notifyIconContextMenuQuit = new ToolStripMenuItem
         {
-            Text = "Quit"
+            Text = "退出"
         };
         notifyIconContextMenuQuit.Click += NotifyIcon_Quit;
 

@@ -121,7 +121,7 @@
     <value>允许收集匿名使用信息</value>
   </data>
   <data name="AllowDCSPTT" xml:space="preserve">
-    <value>允许DCS座舱控制按键说话</value>
+    <value>允许使用 DCS 座舱的通话键（PTT）</value>
   </data>
   <data name="AllowRotaryIncrement" xml:space="preserve">
     <value>旋钮控制频率增减</value>
@@ -214,7 +214,7 @@
     <value>当前位置:</value>
   </data>
   <data name="CurrentUnitLabel" xml:space="preserve">
-    <value>单位:</value>
+    <value>当前机体：</value>
   </data>
   <data name="CurrentProfile" xml:space="preserve">
     <value>当前配置:</value>
@@ -247,7 +247,7 @@
     <value>设置</value>
   </data>
   <data name="DisallowedAudioTone" xml:space="preserve">
-    <value>用提示音代替不允许录音的玩家</value>
+    <value>对不允许录音的通话录制提示音</value>
   </data>
   <data name="DisconnectExternalAWACSMode" xml:space="preserve">
     <value>断开外部预警机模式 (EAM)</value>
@@ -268,7 +268,7 @@
     <value>200%</value>
   </data>
   <data name="ExpandInputDevices" xml:space="preserve">
-    <value>允许更多外设</value>
+    <value>允许更多控制器输入设备</value>
   </data>
   <data name="ExternalAWACSModeNameLabel" xml:space="preserve">
     <value>EAM 外部预警机名</value>
@@ -357,7 +357,7 @@ DCS游戏内SRS浮窗</value>
     <value>在通用页确认你的麦克风和扬声器都已配置正确。</value>
   </data>
   <data name="HelpP2L3" xml:space="preserve">
-    <value>扬声器放大功能可用于抵消因限幅和无线电音效等功能造成你听到别人说话的音量减小。如果你不得不把放大开得很高，可能是由于其他Windows声音太大。 麦克风音量默认开启自动调整，不需要专门设置。</value>
+    <value>扬声器增益可以补偿限幅和无线电音效造成的音量降低。如果增益过高导致其他 Windows 声音过大，请降低增益。</value>
   </data>
   <data name="HelpP3" xml:space="preserve">
     <value>使用遇到问题</value>
@@ -469,7 +469,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>选择机内通话</value>
   </data>
   <data name="InputIntercomPTT" xml:space="preserve">
-    <value>特殊机内通话</value>
+    <value>机内通话选择并通话（特殊绑定）</value>
   </data>
   <data name="InputModifier" xml:space="preserve">
     <value>修饰键</value>
@@ -514,10 +514,10 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>选择无线电 9</value>
   </data>
   <data name="InputRadioChannelDown" xml:space="preserve">
-    <value>上调无线电频道</value>
+    <value>下调无线电频道</value>
   </data>
   <data name="InputRadioChannelUp" xml:space="preserve">
-    <value>下调无线电频道</value>
+    <value>上调无线电频道</value>
   </data>
   <data name="InputRadioOverlay" xml:space="preserve">
     <value>开关无线电浮窗</value>
@@ -535,7 +535,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>开关加密</value>
   </data>
   <data name="InputToggleGuard" xml:space="preserve">
-    <value>开关Guard</value>
+    <value>切换守听频率（Guard）</value>
   </data>
   <data name="InputTransponderIDENT" xml:space="preserve">
     <value>应答机识别开关</value>
@@ -583,7 +583,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>接收音频自动增益控制</value>
   </data>
   <data name="MicDenoise" xml:space="preserve">
-    <value>麦克风噪音消除</value>
+    <value>麦克风噪声抑制</value>
   </data>
   <data name="IncomingAudioDenoise" xml:space="preserve">
     <value>噪声消除</value>
@@ -598,7 +598,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>接收音频</value>
   </data>
   <data name="Minimisetotray" xml:space="preserve">
-    <value>最小化到任务栏</value>
+    <value>最小化到系统托盘</value>
   </data>
   <data name="MiscellanousHeader" xml:space="preserve">
     <value>杂项</value>
@@ -607,11 +607,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>SRS 管理员权限</value>
   </data>
   <data name="MsgBoxAdminText" xml:space="preserve">
-    <value>SRS需要管理器权限才能在后台读取键盘操作。
-
-如果你没有绑定任何键盘键位，可禁用SRS管理员权限。
-
-重启SRS让此设定生效。</value>
+    <value>SRS 通常无需管理员权限，只有某些特殊配置才需要。确定要启用管理员权限吗？此设置将在重启 SRS 后生效。</value>
   </data>
   <data name="MsgBoxAudioError" xml:space="preserve">
     <value>声音输出错误</value>
@@ -828,7 +824,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>配置设置</value>
   </data>
   <data name="PTTReleaseDelay" xml:space="preserve">
-    <value>按键通话结束延迟 - 仅限SRS键位</value>
+    <value>按键通话结束延迟（毫秒，仅 SRS 快捷键）</value>
   </data>
   <data name="PTTReleaseDelay0" xml:space="preserve">
     <value>0</value>
@@ -840,7 +836,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>500</value>
   </data>
   <data name="PTTStartDelay" xml:space="preserve">
-    <value>按键通话开始延迟 - 仅限SRS键位</value>
+    <value>按键通话开始延迟（毫秒，仅 SRS 快捷键）</value>
   </data>
   <data name="PTTStartDelay0" xml:space="preserve">
     <value>0</value>
@@ -894,15 +890,13 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>无线电音效设置</value>
   </data>
   <data name="RadioEncryptionEffectsToggle" xml:space="preserve">
-    <value>加密无线电音效
-需要发送和接收音效均开启</value>
+    <value>无线电加密音效（需启用发送或接收音效）</value>
   </data>
   <data name="RadioEndTransmitEffect" xml:space="preserve">
     <value>无线电发送结束音效</value>
   </data>
   <data name="RadioMIDSToggle" xml:space="preserve">
-    <value>数据链通讯音效
-需要发送和接收音效均开启</value>
+    <value>MIDS 无线电音效（需启用发送或接收音效）</value>
   </data>
   <data name="RadioOverlayTaskbarItem" xml:space="preserve">
     <value>浮窗任务栏隐藏</value>
@@ -917,7 +911,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>开始</value>
   </data>
   <data name="RadioSoundEffects" xml:space="preserve">
-    <value>启用无线电语音音效</value>
+    <value>无线电语音音效混合比例（原声 / 处理后）</value>
   </data>
   <data name="RadioSoundEffectsClipping" xml:space="preserve">
     <value>启用无线电限幅音效（需要无线电音效开启）</value>
@@ -1031,7 +1025,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>外部预警机模式</value>
   </data>
   <data name="SrvLineOfSight" xml:space="preserve">
-    <value>无阻挡检查</value>
+    <value>视距限制（地形遮挡）</value>
   </data>
   <data name="SrvNodeLimit" xml:space="preserve">
     <value>转发节点限制</value>
@@ -1040,10 +1034,10 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>无线电扩展</value>
   </data>
   <data name="SrvRadioRXInterference" xml:space="preserve">
-    <value>真实无线电接收</value>
+    <value>真实无线电接收干扰</value>
   </data>
   <data name="SrvRealRadio" xml:space="preserve">
-    <value>真实无线电发送</value>
+    <value>模拟真实无线电发射行为</value>
   </data>
   <data name="SrvServerVersion" xml:space="preserve">
     <value>服务器版本</value>
@@ -1149,10 +1143,10 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>语音</value>
   </data>
   <data name="VOXEnabled" xml:space="preserve">
-    <value>机内通讯常开时使用感应激活</value>
+    <value>机内通话常开时启用语音检测（VOX）</value>
   </data>
   <data name="VOXHeader" xml:space="preserve">
-    <value>机内通讯感应激活</value>
+    <value>机内通话语音检测（常开麦克风）</value>
   </data>
   <data name="VOXMinimimumTXTime" xml:space="preserve">
     <value>感应激活最短传输时间（毫秒）</value>
@@ -1221,7 +1215,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>没有有效的麦克风，其他人将无法听到你说话</value>
   </data>
   <data name="ToolTipNoMicL2" xml:space="preserve">
-    <value>你依然可以用SRS接受无线电呼叫，但无法发送任何东西</value>
+    <value>您仍可使用 SRS 接收无线电通话，但无法发送语音。</value>
   </data>
   <data name="ToolTipRecordQuality" xml:space="preserve">
     <value>只有当录制无线电传输设为关时，质量才能被设置</value>

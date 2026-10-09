@@ -110,7 +110,7 @@ internal class AudioPreview
         {
             Logger.Error(ex, "Error starting audio Output - Quitting! " + ex.Message);
 
-            ShowOutputError("Problem Initialising Audio Output!");
+            ShowOutputError("无法初始化音频输出设备");
 
             Environment.Exit(1);
         }
@@ -165,25 +165,25 @@ internal class AudioPreview
     {
         var audioInputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
         {
-            Caption = "Audio Input Error",
-            Heading = "\"Problem initialising Audio Input!",
-            Text = "If you are using Windows 10, this could be caused by your privacy settings (make sure to allow apps to access your microphone).\nAlternatively, try a different Input device and please post your client log to the support Discord server.",
+            Caption = "音频输入错误",
+            Heading = "无法初始化音频输入设备",
+            Text = "如果您使用 Windows 10，请检查隐私设置，允许应用访问麦克风。\n也可尝试其他输入设备。若仍有问题，请将客户端日志提供给支持人员（原作者 Discord 社区）。",
             Icon = TaskDialogIcon.Error,
             Buttons =
                 {
                     new TaskDialogButton
                     {
-                        Text = "OPEN PRIVACY SETTINGS",
+                        Text = "打开隐私设置",
                         Tag = 1
                     },
                     new TaskDialogButton
                     {
-                        Text =  "JOIN DISCORD SERVER",
+                        Text =  "加入 Discord 社区",
                         Tag = 2
                     },
                     new TaskDialogButton
                     {
-                        Text = "CLOSE",
+                        Text = "关闭",
                         Tag = 3
                     }
                 }
@@ -209,20 +209,20 @@ internal class AudioPreview
     {
         var audioOutputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
         {
-            Caption = "Audio Output Error",
+            Caption = "音频输出错误",
             Heading = message,
-            Text = "Try a different output device and please post your client log to the support Discord server.",
+            Text = "请尝试其他输出设备。若仍有问题，请将客户端日志提供给支持人员（原作者 Discord 社区）。",
             Icon = TaskDialogIcon.Error,
             Buttons =
             {
                 new TaskDialogButton
                 {
-                    Text =  "JOIN DISCORD SERVER",
+                    Text =  "加入 Discord 社区",
                     Tag = 2
                 },
                 new TaskDialogButton
                 {
-                    Text = "CLOSE",
+                    Text = "关闭",
                     Tag = 3
                 }
             }

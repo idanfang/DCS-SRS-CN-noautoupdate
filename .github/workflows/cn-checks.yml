@@ -1,0 +1,25 @@
+name: Chinese Windows checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    if: github.repository == 'idanfang/DCS-SRS-CN-noautoupdate'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build Windows applications
+        shell: pwsh
+        run: |
+          foreach ($project in @('DCS-SR-Client/DCS-SR-Client.csproj', 'Server/Server.csproj', 'Installer/Installer.csproj', 'AutoUpdater/AutoUpdater.csproj', 'DCS-SR-ExternalAudio/DCS-SR-ExternalAudio.csproj', 'ServerCommandLine/ServerCommandLine.csproj')) {
+            dotnet build $project -c Release --nologo
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+      - name: Test common components
+        run: dotnet test DCS-SR-CommonTests/DCS-SR-CommonTests.csproj -c Release --nologo

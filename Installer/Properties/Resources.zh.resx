@@ -139,13 +139,13 @@
     <value>更改安装设置？</value>
   </data>
   <data name="MsgBoxChangeText" xml:space="preserve">
-    <value>你想要更改设置吗？
+    <value>是否修改安装设置？
 
-是 - 暂停安装以进行修改
+是：暂停安装，修改设置。
 
-否 - 以先前的安装路径和脚本作为默认
+否：使用上次的安装路径，并默认安装 DCS 脚本。
 
-如果不确定，猛击“是”！</value>
+如不确定，请选择“是”。</value>
   </data>
   <data name="MsgBoxDCS" xml:space="preserve">
     <value>请先退出DCS</value>
@@ -162,9 +162,7 @@
     <value>没有解压</value>
   </data>
   <data name="MsgBoxExtractedText" xml:space="preserve">
-    <value>请解压整个安装压缩包至一个文件夹，再从文件夹内运行Installer。
-
-不要在压缩包里运行Installer，跑 不 起 来！</value>
+    <value>请先将安装包中的全部文件解压到同一个文件夹，再运行安装程序。不要直接从 ZIP 压缩包内启动安装程序。</value>
   </data>
   <data name="MsgBoxExtractedText2" xml:space="preserve">
     <value>未找到安装所需文件，无法安装。
@@ -199,9 +197,7 @@ DCS脚本已安装至:
     <value>SRS安装程序</value>
   </data>
   <data name="MsgBoxRemovedText" xml:space="preserve">
-    <value>SRS成功卸载！
-
-器文件夹内的配置文件已保留，方便日后取用。</value>
+    <value>已卸载 SRS。原安装文件夹已保留，便于保留服务器收藏和频率预设。</value>
   </data>
   <data name="MsgBoxRemovedText2" xml:space="preserve">
     <value>SRS成功卸载！</value>

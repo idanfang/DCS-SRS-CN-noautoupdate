@@ -322,16 +322,16 @@ namespace Installer
                         {
                             InstallButton.IsEnabled = true;
                             RemoveButton.IsEnabled = true;
-                            InstallButton.Content = "Install";
+                            InstallButton.Content = "安装";
                         }
                     ); //end-invoke
-                    _progressBarDialog.UpdateProgress(true, "Error");
+                    _progressBarDialog.UpdateProgress(true, "错误");
                 }
                 else if (result == 1)
                 {
-                    _progressBarDialog.UpdateProgress(true, "Installed SRS Successfully!");
+                    _progressBarDialog.UpdateProgress(true, "SRS 安装成功！");
 
-                    Logger.Info($"Installed SRS Successfully!");
+                    Logger.Info($"SRS 安装成功！");
 
                     //open to installation location
                     // Process.Start("explorer.exe", srPath.Text);
@@ -339,7 +339,7 @@ namespace Installer
                 }
                 else
                 {
-                    _progressBarDialog.UpdateProgress(true, "Error with Installation");
+                    _progressBarDialog.UpdateProgress(true, "安装失败");
 
                     MessageBox.Show(
                         Properties.Resources.MsgBoxInstallErrorText,
@@ -477,10 +477,10 @@ namespace Installer
 
         private void InstallVCRedist()
         {
-            _progressBarDialog.UpdateProgress(false, $"Installing VC Redist x64");
+            _progressBarDialog.UpdateProgress(false, $"正在安装 VC++ x64 运行库");
             Process.Start(GetWorkingDirectory() + "\\VC_redist.x64.exe",
                 "/install /norestart /quiet /log \"vc_redist_2017_x64.log\"");
-            _progressBarDialog.UpdateProgress(false, $"Finished installing VC Redist x64");
+            _progressBarDialog.UpdateProgress(false, $"VC++ x64 运行库安装完成");
         }
 
         static void ListFiles(string sDir)
@@ -506,7 +506,7 @@ namespace Installer
         private void CleanPreviousInstall(string programPath)
         {
             Logger.Info($"Removed SRS program files at {programPath}");
-            _progressBarDialog.UpdateProgress(false, $"Removing SRS at {programPath}");
+            _progressBarDialog.UpdateProgress(false, $"正在卸载 SRS：{programPath}");
             
             if (Directory.Exists(programPath))
             {
@@ -562,7 +562,7 @@ namespace Installer
 
             foreach (var path in paths)
             {
-                _progressBarDialog.UpdateProgress(false, $"Removing SRS at {path}");
+                _progressBarDialog.UpdateProgress(false, $"正在卸载 SRS：{path}");
                 RemoveScriptsPostModsServicesDCS(path);
             }
             
@@ -821,18 +821,18 @@ namespace Installer
             
             
             Logger.Info($"Installing SRS Program to {path}");
-            _progressBarDialog.UpdateProgress(false, $"Installing SRS at {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在安装 SRS：{path}");
             //sleep! WTF directory is lagging behind state here...
             Task.Delay(TimeSpan.FromMilliseconds(200)).Wait();
 
-            _progressBarDialog.UpdateProgress(false, $"Creating Directories at {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在创建目录：{path}");
 
             Logger.Info($"Creating Directories");
             CreateDirectory(path);
 
             //sleep! WTF directory is lagging behind state here...
             Task.Delay(TimeSpan.FromMilliseconds(200)).Wait();
-            _progressBarDialog.UpdateProgress(false, $"Copying Program Files at {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在复制程序文件：{path}");
 
             Logger.Info($"Copying binaries");
 
@@ -1000,7 +1000,7 @@ namespace Installer
         private void InstallScripts(string path)
         {
             Logger.Info($"Installing Scripts to {path}");
-            _progressBarDialog.UpdateProgress(false, $"Creating Script folders @ {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在创建脚本目录：{path}");
             //Scripts Path
             CreateDirectory(path + "\\Scripts");
             CreateDirectory(path + "\\Scripts\\Hooks");
@@ -1012,7 +1012,7 @@ namespace Installer
 
             Task.Delay(TimeSpan.FromMilliseconds(100)).Wait();
 
-            _progressBarDialog.UpdateProgress(false, $"Updating / Creating Export.lua @ {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在更新 / 创建 Export.lua：{path}");
             Logger.Info($"Handling Export.lua");
             //does it contain an export.lua?
             if (File.Exists(path + "\\Scripts\\Export.lua"))
@@ -1066,7 +1066,7 @@ namespace Installer
 
             //Now sort out Scripts//Hooks folder contents
             Logger.Info($"Creating / installing Hooks & Mods / Services");
-            _progressBarDialog.UpdateProgress(false, $"Creating / installing Hooks & Mods/Services @ {path}");
+            _progressBarDialog.UpdateProgress(false, $"正在创建 / 安装 Hooks 和 Mods/Services：{path}");
             try
             {
                 File.Copy(_currentDirectory + "\\Scripts\\Hooks\\DCS-SRS-hook.lua",
@@ -1085,7 +1085,7 @@ namespace Installer
 
             Logger.Info($"Scripts installed to {path}");
 
-            _progressBarDialog.UpdateProgress(false, $"Installed Hooks & Mods/Services @ {path}");
+            _progressBarDialog.UpdateProgress(false, $"Hooks 和 Mods/Services 安装完成：{path}");
         }
 
         public static void DeleteDirectory(string target_dir)
@@ -1104,7 +1104,7 @@ namespace Installer
             if (!dir.Exists)
             {
                 throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
+                    "源目录不存在或无法找到："
                     + sourceDirName);
             }
 
@@ -1141,11 +1141,11 @@ namespace Installer
                         InstallButton.IsEnabled = false;
                         RemoveButton.IsEnabled = false;
 
-                        RemoveButton.Content = "Removing...";
+                        RemoveButton.Content = "正在卸载…";
                     }
                 ); //end-invoke
 
-                _progressBarDialog.UpdateProgress(false, $"Removing SRS");
+                _progressBarDialog.UpdateProgress(false, $"正在卸载 SRS");
                 Logger.Info($"Removing - Paths: \nProgram:{srPath} \nDCS:{dcsScriptsPath} ");
                 ClearVersionPostModsServicesDCS(srPath, dcsScriptsPath);
 

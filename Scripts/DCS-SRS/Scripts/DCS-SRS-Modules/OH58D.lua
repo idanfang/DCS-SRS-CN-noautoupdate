@@ -1,6 +1,6 @@
 local _oh58RetranPersist = nil -- For persistence of retrans variable
 function exportRadioOH58D(_data, SR)
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "VOX control for intercom volume" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "使用 VOX 控制调节机内通话音量。" }
 
 
     _data.radios[1].name = "Intercom"

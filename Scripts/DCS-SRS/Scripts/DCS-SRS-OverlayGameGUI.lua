@@ -318,7 +318,7 @@ function srsOverlay.updateRadio()
 		
 		
         if srsOverlay.getMode() == _modes.full and _radioState.ClientCountConnected then
-            local clientCountMsg = string.format("Connected clients: %i", _radioState.ClientCountConnected)
+            local clientCountMsg = string.format("已连接客户端：%i", _radioState.ClientCountConnected)
 
             local countMsg = {message = clientCountMsg, skin = typesMessage.normal, height = 20 }
 
@@ -598,14 +598,14 @@ function srsOverlay.paintRadio()
     if #_listMessages == 0 then
 
 		if enabled then
-			table.insert(_listMessages, {message = "SRS not connected", skin =typesMessage.guard, height = 20 })
-			table.insert(_listMessages, {message = "Connect to an SRS server and join a mission", skin =typesMessage.guard, height = 20 })
-			table.insert(_listMessages, {message = "SRS DCS settings:", skin =typesMessage.guard, height = 20 })
-			table.insert(_listMessages, {message = "Options -> SPECIAL -> DCS-SRS", skin =typesMessage.guard, height = 20 })
-			table.insert(_listMessages, {message = "Toggle (by default) with:", skin =typesMessage.guard, height = 20 })
-			table.insert(_listMessages, {message = "LEFT CTRL + LEFT SHIFT + ESC", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "SRS 未连接", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "请连接 SRS 服务器并进入任务", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "DCS 中的 SRS 设置：", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "选项 → 特殊 → DCS-SRS", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "默认显示 / 隐藏快捷键：", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "左 Ctrl + 左 Shift + Esc", skin =typesMessage.guard, height = 20 })
 		else
-			table.insert(_listMessages, {message = "SRS not connected", skin =typesMessage.guard, height = 20 })
+			table.insert(_listMessages, {message = "SRS 未连接", skin =typesMessage.guard, height = 20 })
 		end
     end
 

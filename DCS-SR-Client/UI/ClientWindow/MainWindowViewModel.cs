@@ -554,9 +554,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     //invalid ID
                     await TaskDialog.ShowDialogAsync(new TaskDialogPage
                     {
-                        Caption = "Host Name Error",
-                        Heading = "Invalid IP or Host Name!",
-                        Text = "Please check the IP address or host name you entered and try again.",
+                        Caption = "服务器地址错误",
+                        Heading = "IP 地址或主机名无效",
+                        Text = "请检查输入的 IP 地址或主机名，然后重试。",
                         Icon = TaskDialogIcon.Error,
                         Buttons = [TaskDialogButton.OK]
                     });
@@ -568,9 +568,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             {
                 await TaskDialog.ShowDialogAsync(new TaskDialogPage
                 {
-                    Caption = "Host Name Error",
-                    Heading = "Invalid IP or Host Name!",
-                    Text = "Please check the IP address or host name you entered and try again.",
+                    Caption = "服务器地址错误",
+                    Heading = "IP 地址或主机名无效",
+                    Text = "请检查输入的 IP 地址或主机名，然后重试。",
                     Icon = TaskDialogIcon.Error,
                     Buttons = [TaskDialogButton.OK]
                 });
@@ -649,10 +649,10 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             await TaskDialog.ShowDialogAsync(new TaskDialogPage
             {
-                Caption = "Mic Output and Speaker Output Matching",
-                Heading = "Warning!",
+                Caption = "麦克风监听输出与扬声器输出相同",
+                Heading = "提示",
                 Text =
-                    "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
+                    "麦克风监听输出与扬声器输出不应使用同一个设备。\n\n麦克风监听输出用于录音，不适合作为实时侧音：您会听到略有延迟的自己的声音。\n\n请断开连接，再更改麦克风监听输出设备。",
                 Icon = TaskDialogIcon.Warning,
                 Buttons = [TaskDialogButton.OK]
             });
@@ -712,16 +712,16 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
                 var audioOutputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
                 {
-                    Caption = "Audio Output Error",
-                    Heading = "Problem initialising Audio Output!",
+                    Caption = "音频输出错误",
+                    Heading = "无法初始化音频输出设备",
                     Text =
-                        "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
+                        "请尝试其他输出设备，并检查 Windows 隐私设置。\n\n如果问题仍存在，请禁用其他所有输出设备，再重启 SRS。",
                     Icon = TaskDialogIcon.Error,
                     Buttons =
                     {
                         new TaskDialogButton
                         {
-                            Text = "Close",
+                            Text = "关闭",
                             Tag = 3
                         }
                     }

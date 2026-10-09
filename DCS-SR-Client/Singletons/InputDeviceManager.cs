@@ -762,9 +762,9 @@ public class InputDeviceManager : IDisposable
         Application.Current.Dispatcher.Invoke(() =>
         {
             MessageBox.Show(
-                $"An error occurred while querying your {deviceName} input device.\nThis could for example be caused by unplugging " +
-                $"your joystick or disabling it in the Windows settings.\n\nAll controls bound to this input device will not work anymore until your press 'Rescan Controller Input' in the SRS controls section or restart SRS",
-                "Input device error",
+                $"读取输入设备 {deviceName} 时发生错误。\n可能的原因包括拔下控制器" +
+                $"或在 Windows 设置中禁用设备。\n\n此设备的所有绑定将暂时失效。请在 SRS“控制设置”中点击“重新扫描控制器”，或重启 SRS。",
+                "输入设备错误",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         });

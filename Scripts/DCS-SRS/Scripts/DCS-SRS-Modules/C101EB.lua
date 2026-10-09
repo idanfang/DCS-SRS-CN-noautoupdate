@@ -1,6 +1,6 @@
 function exportRadioC101EB(_data, SR)
 
-    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Pull the HOT MIC breaker up to enable HOT MIC" }
+    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "向上拉出 HOT MIC 断路器，以启用常开麦克风。" }
 
     _data.radios[1].name = "INTERCOM"
     _data.radios[1].freq = 100

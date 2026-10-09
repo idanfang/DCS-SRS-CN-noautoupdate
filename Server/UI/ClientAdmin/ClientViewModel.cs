@@ -64,8 +64,8 @@ public class ClientViewModel : Screen
 
     public void KickClient()
     {
-        var messageBoxResult = MessageBox.Show($"Are you sure you want to Kick {Client.Name}?",
-            "Ban Confirmation",
+        var messageBoxResult = MessageBox.Show($"确定要将 {Client.Name} 踢出服务器吗？",
+            "踢出确认",
             MessageBoxButton.YesNo);
         if (messageBoxResult == MessageBoxResult.Yes)
             _eventAggregator.PublishOnBackgroundThreadAsync(new KickClientMessage(Client));
@@ -73,8 +73,8 @@ public class ClientViewModel : Screen
 
     public void BanClient()
     {
-        var messageBoxResult = MessageBox.Show($"Are you sure you want to Ban {Client.Name}?",
-            "Ban Confirmation",
+        var messageBoxResult = MessageBox.Show($"确定要封禁 {Client.Name} 吗？",
+            "封禁确认",
             MessageBoxButton.YesNo);
         if (messageBoxResult == MessageBoxResult.Yes)
             _eventAggregator.PublishOnBackgroundThreadAsync(new BanClientMessage(Client));

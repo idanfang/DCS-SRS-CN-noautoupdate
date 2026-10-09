@@ -1,7 +1,7 @@
 --for F-4
 function exportRadioF4(_data, SR)
 
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Expansion Radio requires Always allow SRS Hotkeys on. 2nd radio is receive only" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "使用扩展电台需要开启“始终允许 SRS 快捷键”。第二部电台仅可接收。" }
 
     local ics_devid = 2
     local arc164_devid = 3

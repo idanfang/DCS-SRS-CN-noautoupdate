@@ -17,6 +17,6 @@
         </Grid.RowDefinitions>
 
         <local:InputBindingControl></local:InputBindingControl>
-        <Button Grid.Column="2" x:Name="NewButton" Content="Add Binding"/>
+        <Button Grid.Column="2" x:Name="NewButton" Content="添加绑定"/>
     </Grid>
 </UserControl>

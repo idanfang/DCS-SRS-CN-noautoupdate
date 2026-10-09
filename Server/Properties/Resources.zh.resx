@@ -142,13 +142,13 @@
     <value>开</value>
   </data>
   <data name="BtnStartServer" xml:space="preserve">
-    <value>开始服务器</value>
+    <value>启动服务器</value>
   </data>
   <data name="BtnStopServer" xml:space="preserve">
     <value>停止服务器</value>
   </data>
   <data name="LabelArchiveTime" xml:space="preserve">
-    <value>传输存档时间</value>
+    <value>通话记录保留时间</value>
   </data>
   <data name="LabelCheckBetaUpdates" xml:space="preserve">
     <value>检查Beta版更新</value>
@@ -181,7 +181,7 @@
     <value>LotATC应答机导出</value>
   </data>
   <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
-    <value>大厅无视无线电效果</value>
+    <value>全局频率不应用无线电音效</value>
   </data>
   <data name="LabelPort" xml:space="preserve">
     <value>端口:</value>
@@ -193,10 +193,10 @@
     <value>扩展无线电</value>
   </data>
   <data name="LabelRealRx" xml:space="preserve">
-    <value>真实无线电接收</value>
+    <value>模拟真实无线电接收行为</value>
   </data>
   <data name="LabelRealTx" xml:space="preserve">
-    <value>真实无线电发送</value>
+    <value>模拟真实无线电发射行为</value>
   </data>
   <data name="LabelRetransmitNodeLimit" xml:space="preserve">
     <value>转发节点数限制</value>
@@ -208,7 +208,7 @@
     <value>显示发送者名字</value>
   </data>
   <data name="LabelSpectator" xml:space="preserve">
-    <value>观众席语音</value>
+    <value>旁观者语音</value>
   </data>
   <data name="LabelStrictEncryption" xml:space="preserve">
     <value>严格无线电加密</value>
@@ -217,7 +217,7 @@
     <value>自我测试频率 AM (MHz)</value>
   </data>
   <data name="LabelTransmissionLog" xml:space="preserve">
-    <value>记录收到的传输</value>
+    <value>记录收到的无线电通话</value>
   </data>
   <data name="ServerPresetsEnabled" xml:space="preserve">
     <value>服务器频道预设</value>

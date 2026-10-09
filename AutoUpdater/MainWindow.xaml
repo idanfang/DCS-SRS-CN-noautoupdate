@@ -1,16 +1,16 @@
-﻿<Window x:Class="AutoUpdater.MainWindow"
+<Window FontFamily="Microsoft YaHei" x:Class="AutoUpdater.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="DCS-SRS Auto Updater" Height="150" Width="300" Closing="OnClosing">
+        Title="DCS-SRS 手动更新器" Height="150" Width="300" Closing="OnClosing">
     <StackPanel Height="100" Width="300" HorizontalAlignment="Center">
-        <Label x:Name="Status" Content="Downloading SRS Update" HorizontalAlignment="Center" Margin="0,0,0,0" />
+        <Label x:Name="Status" Content="正在下载 SRS 更新" HorizontalAlignment="Center" Margin="0,0,0,0" />
         <ProgressBar x:Name="DownloadProgress" Minimum="0" Maximum="100" HorizontalAlignment="Center" Height="20"
                      Margin="0,5,0,0" VerticalAlignment="Top" Width="220" />
 
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Center" Margin="0,10,0,0"
+        <Button x:Name="CancelButton" Content="取消" HorizontalAlignment="Center" Margin="0,10,0,0"
                 VerticalAlignment="Top" Width="80" Click="CancelButtonClick" />
 
 

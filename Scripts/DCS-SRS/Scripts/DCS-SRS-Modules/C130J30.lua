@@ -10,7 +10,7 @@ function exportRadioC130J30(_data, SR)
         dcsIFF = true,
         dcsRadioSwitch = true,
         intercomHotMic = true,
-        desc = "Use COMMON PTT and SPECIAL INTERCOM for HOTAS controls"
+        desc = "HOTAS 控制请使用通用通话键（COMMON PTT）和特殊机内通话绑定（SPECIAL INTERCOM）。"
     }
     _data.control = 1
 

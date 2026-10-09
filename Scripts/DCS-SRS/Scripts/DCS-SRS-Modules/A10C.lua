@@ -1,6 +1,6 @@
 function exportRadioA10C(_data, SR)
 
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "使用座舱通话键（HOTAS 麦克风开关）需要绑定 DCS 的 VoIP 按键。" }
 
     -- Check if player is in a new aircraft
     if SR.LastKnownUnitId ~= _data.unitId then

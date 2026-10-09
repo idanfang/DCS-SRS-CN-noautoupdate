@@ -68,9 +68,9 @@ public partial class SettingsToggleControl : UserControl
             var toggle = (ToggleSwitch)sender;
 
             if (toggle.IsOn)
-                Toggle.Content = "ON";
+                Toggle.Content = "开";
             else
-                Toggle.Content = "Off";
+                Toggle.Content = "关";
         };
        
     }

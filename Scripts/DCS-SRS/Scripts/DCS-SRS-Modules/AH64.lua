@@ -1,6 +1,6 @@
 local _ah64Mode1Persist = -1 -- Need this persistence for only MODE1 because it's pulled from the XPNDR page; default it to off
 function exportRadioAH64D(_data, SR)
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "建议关闭“始终允许 SRS 快捷键”，并绑定机内通话选择及通话键、无线电通话键，以及 DCS 的 RTS 上 / 下操作。" }
     _data.control = 1
 
     local _iffSettings = {

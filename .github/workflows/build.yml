@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     name: Build
+    if: github.repository == 'ciribob/DCS-SimpleRadioStandalone'
     runs-on: windows-2025-vs2026
     steps:
     - name: Checkout
@@ -34,6 +35,7 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
   publish:
     name: publish
+    if: github.repository == 'ciribob/DCS-SimpleRadioStandalone'
     runs-on: windows-2025-vs2026
     steps:
     - name: Checkout

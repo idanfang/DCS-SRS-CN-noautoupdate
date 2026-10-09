@@ -141,11 +141,11 @@
     <!--    </Style>-->
 
     <Style TargetType="{x:Type UserControl}">
-        <Setter Property="FontFamily" Value="Calibri light" />
+        <Setter Property="FontFamily" Value="Microsoft YaHei" />
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
     </Style>
     <Style TargetType="{x:Type Control}">
-        <Setter Property="FontFamily" Value="Calibri light" />
+        <Setter Property="FontFamily" Value="Microsoft YaHei" />
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
     </Style>
 

@@ -89,8 +89,8 @@ public class FavouriteServersViewModel
         var saveSucceeded = _favouriteServerStore.SaveToStore(Addresses);
         if (!saveSucceeded)
             MessageBox.Show(Application.Current.MainWindow,
-                "Failed to save favourite servers. Please check logs for details.",
-                "Favourite server save failure",
+                "无法保存服务器收藏，请查看日志了解详情。",
+                "保存服务器收藏失败",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
     }

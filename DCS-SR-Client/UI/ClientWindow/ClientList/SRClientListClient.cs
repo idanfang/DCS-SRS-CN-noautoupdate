@@ -43,7 +43,7 @@ public class SRClientListClient : SRClientBase
         }
     }
 
-    public string IsMuted => Muted ? "Muted" : "";
+    public string IsMuted => Muted ? "已静音" : "";
 
     public void ToggleClientMute()
     {

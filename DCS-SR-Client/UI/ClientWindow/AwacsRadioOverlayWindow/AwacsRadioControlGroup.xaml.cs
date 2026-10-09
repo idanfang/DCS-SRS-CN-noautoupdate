@@ -387,7 +387,7 @@ public partial class RadioControlGroup : UserControl
                 RadioFrequency.Text = "INT. "+RadioId;
                 RadioMetaData.Text = "";
                 ToggleButtons(false);
-                RadioLabel.Text = "INSTR. INT. "+(RadioId);
+                RadioLabel.Text = "教员机内通话 "+(RadioId);
                 
                 return;
             }

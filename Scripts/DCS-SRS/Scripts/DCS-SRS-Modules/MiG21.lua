@@ -1,6 +1,6 @@
 function exportRadioMIG21(_data, SR)
 
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "默认仅有一部无线电。" }
 
     _data.radios[2].name = "R-832"
     _data.radios[2].freq = SR.getRadioFrequency(22)

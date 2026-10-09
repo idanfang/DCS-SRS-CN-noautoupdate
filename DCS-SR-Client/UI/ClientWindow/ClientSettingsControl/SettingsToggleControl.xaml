@@ -15,8 +15,8 @@
         VerticalContentAlignment="Center"
         IsOn="{Binding ElementName=ToggleSettingsControl, Path=ToggleValue, Mode=TwoWay}"
         Width="100"
-        OffContent="Off"
-        OnContent="On">
+        OffContent="关"
+        OnContent="开">
 
         <!-- <ToggleButton.Style > -->
         <!--     <Style TargetType="{x:Type ToggleButton}"> -->

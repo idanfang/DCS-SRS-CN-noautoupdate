@@ -47,6 +47,7 @@ public class Bootstrapper : BootstrapperBase
             Debug.Assert(false, "Unable to set max threads!");
         }
 #endif
+        Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh-CN");
         InitCfgPath();
         
         SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");

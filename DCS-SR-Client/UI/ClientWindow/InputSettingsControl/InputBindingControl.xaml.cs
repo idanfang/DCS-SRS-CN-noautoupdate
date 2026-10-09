@@ -22,7 +22,7 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
 
     public static readonly DependencyProperty ControlInputNameDependencyPropertyProperty =
         DependencyProperty.Register(nameof(InputName), typeof(string), typeof(InputBindingControl),
-            new PropertyMetadata("None")
+            new PropertyMetadata("未绑定")
         );
 
 

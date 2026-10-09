@@ -96,7 +96,7 @@ function exportRadioUH1H(_data, SR)
         _data.control = 1; -- Full Radio
 
 
-        _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Hot mic on INT switch" }
+        _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "使用 INT 开关控制机内通话常开麦克风。" }
     else
         _data.control = 0; -- no copilot or gunner radio controls - allow them to switch
         
@@ -105,7 +105,7 @@ function exportRadioUH1H(_data, SR)
         _data.radios[3].volMode = 1 
         _data.radios[4].volMode = 1
 
-        _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = true, desc = "Hot mic on INT switch" }
+        _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = true, desc = "使用 INT 开关控制机内通话常开麦克风。" }
     end
 
 

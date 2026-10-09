@@ -97,8 +97,8 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             if (current.Equals("default"))
             {
                 MessageBox.Show(Application.Current.MainWindow,
-                    "Cannot rename the default input!",
-                    "Error",
+                    "无法重命名默认配置。",
+                    "错误",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
@@ -128,16 +128,16 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             if (current.Equals("default"))
             {
                 MessageBox.Show(Application.Current.MainWindow,
-                    "Cannot delete the default input!",
-                    "Error",
+                    "无法删除默认配置。",
+                    "错误",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
             else
             {
                 var result = MessageBox.Show(Application.Current.MainWindow,
-                    $"Are you sure you want to delete {current} ?",
-                    "Confirmation",
+                    $"确定删除配置“{current}”吗？",
+                    "确认",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning);
 

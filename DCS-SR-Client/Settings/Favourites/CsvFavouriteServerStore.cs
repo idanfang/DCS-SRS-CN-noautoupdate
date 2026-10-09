@@ -34,7 +34,7 @@ public class CsvFavouriteServerStore : IFavouriteServerStore
         }
         catch (Exception exception)
         {
-            var message = $"Failed to load settings: {exception}";
+            var message = $"无法读取服务器收藏：{exception}";
             Logger.Error(exception, message);
             MessageBox.Show(message);
         }

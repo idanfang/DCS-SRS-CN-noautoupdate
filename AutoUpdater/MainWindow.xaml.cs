@@ -22,9 +22,9 @@ namespace AutoUpdater;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public static readonly string GITHUB_USERNAME = "ciribob";
+    public static readonly string GITHUB_USERNAME = Environment.GetCommandLineArgs().Contains("-source=cn") ? "idanfang" : "ciribob";
 
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
+    public static readonly string GITHUB_REPOSITORY = Environment.GetCommandLineArgs().Contains("-source=cn") ? "DCS-SRS-CN-noautoupdate" : "DCS-SimpleRadioStandalone";
 
     // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
     public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
@@ -36,16 +36,24 @@ public partial class MainWindow : Window
     private double _lastValue = -1;
     private DispatcherTimer _progressCheckTimer;
     private Uri _uri;
+    private WebClient _downloadClient;
+    private DateTime _lastProgressAt = DateTime.UtcNow;
 
     private string changelogURL = "";
 
     public MainWindow()
     {
         InitializeComponent();
-        QuitSimpleRadio();
+        if (!Environment.GetCommandLineArgs().Any(arg => arg.StartsWith("-tag=")))
+        {
+            MessageBox.Show("请在 SRS“高级设置 → 全局设置”中选择来源并点击更新按钮。", "手动更新");
+            Close();
+            return;
+        }
+
         if (IsAnotherRunning())
         {
-            MessageBox.Show("Please close DCS-SimpleRadio Standalone before running", "SRS Auto Updater",
+            MessageBox.Show("已有更新器在运行，请关闭另一个更新器后再试。", "SRS 手动更新器",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             Environment.Exit(0);
 
@@ -155,51 +163,21 @@ public partial class MainWindow : Window
     
     private async Task<Uri> GetPathToLatestVersion()
     {
-        Status.Content = "Finding Latest SRS Version";
+        Status.Content = "正在查找 SRS 版本";
         var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, "1.0.0.0"));
 
-        var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
-
-        var release = FindRightRelease(releases);
-        var releaseAsset = release.Assets.First();
-
-        foreach (var asset in release.Assets)
-            if (asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
-                asset.Name.ToLower().Contains(".zip"))
-            {
-                changelogURL = release.HtmlUrl;
-                Status.Content = "Downloading Version " + release.TagName;
-
-                if (ServerInstall())
-                {
-                    //check the path and version
-                    var path = ServerPath();
-
-                    if (path.Length > 0)
-                    {
-                        var latestVersion = new Version(release.TagName.Replace("v", ""));
-                        var serverExe = Path.Combine(path,"Server", "SRS-Server.exe");
-                        var useThisVersion = true;
-                        if (Path.Exists(serverExe))
-                        {
-                            var serverVersion = new Version(FileVersionInfo.GetVersionInfo(serverExe).FileVersion);
-                            useThisVersion = serverVersion < latestVersion;
-                        }
-                        
-
-                        if (useThisVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
-
-                        //no update
-                        return null;
-                    }
-                }
-
-                return new Uri(releaseAsset.BrowserDownloadUrl);
-            }
-        
-        return null;
+        var tagArgument = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("-tag="));
+        // No implicit latest-version download: the settings screen must select the release.
+        if (tagArgument == null) throw new InvalidOperationException("请从高级设置 → 全局设置中发起手动更新。");
+        var release = await githubClient.Repository.Release.Get(GITHUB_USERNAME, GITHUB_REPOSITORY, tagArgument.Substring(5));
+        var asset = release.Assets.FirstOrDefault(item =>
+            item.Name.StartsWith("DCS-SimpleRadioStandalone", StringComparison.OrdinalIgnoreCase)
+            && item.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
+        if (asset == null) throw new InvalidOperationException("该版本未提供安装包。");
+        changelogURL = release.HtmlUrl;
+        Status.Content = "正在下载 " + release.TagName;
+        return new Uri(asset.BrowserDownloadUrl);
     }
-
     private bool AllowBeta()
     {
         foreach (var arg in Environment.GetCommandLineArgs())
@@ -253,8 +231,8 @@ public partial class MainWindow : Window
     public void ShowError()
     {
         MessageBox.Show(
-            "Error Auto Updating SRS - Please check internet connection and try again \n\nAlternatively: \n1. Download the latest DCS-SimpleRadioStandalone.zip from the SRS Github Release page\n2. Extract all the files to a temporary directory\n3. Run the installer.",
-            "Auto Updater Error",
+            $"手动更新失败，请检查网络连接后重试。\n\n也可从所选来源的发布页手动下载完整 ZIP 安装包，解压全部文件，再运行 installer.exe。\n\nhttps://github.com/{GITHUB_USERNAME}/{GITHUB_REPOSITORY}/releases",
+            "手动更新失败",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
 
@@ -273,19 +251,18 @@ public partial class MainWindow : Window
             _directory = GetTemporaryDirectory();
             _file = _directory + "\\temp.zip";
 
-            using (WebClient wc = new MyWebClient())
-            {
-                wc.Headers.Add("user-agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)");
-                wc.DownloadProgressChanged += DownloadProgressChanged;
-                wc.DownloadFileAsync(_uri, _file);
-                wc.DownloadFileCompleted += DownloadComplete;
-
-                //check download progress periodically - if the download is stalled we dont get told by anything
-                _progressCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
-                _progressCheckTimer.Tick += CheckProgress;
-                _progressCheckTimer.Start();
-            }
+            _downloadClient = new MyWebClient();
+            var wc = _downloadClient;
+            wc.Headers.Add("user-agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)");
+            wc.DownloadProgressChanged += DownloadProgressChanged;
+            wc.DownloadFileCompleted += DownloadComplete;
+            // Keep the client alive until completion or cancellation.
+            _lastProgressAt = DateTime.UtcNow;
+            _progressCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(10) };
+            _progressCheckTimer.Tick += CheckProgress;
+            _progressCheckTimer.Start();
+            wc.DownloadFileAsync(_uri, _file);
         }
         catch (Exception exception)
         {
@@ -295,8 +272,7 @@ public partial class MainWindow : Window
 
     private void CheckProgress(object sender, EventArgs e)
     {
-        if (_lastValue == DownloadProgress.Value && _finished == false)
-            //no progress
+        if (!_finished && !_cancel && DateTime.UtcNow - _lastProgressAt > TimeSpan.FromMinutes(2))
             ShowError();
 
         _lastValue = DownloadProgress.Value;
@@ -314,9 +290,22 @@ public partial class MainWindow : Window
     private void DownloadComplete(object sender, AsyncCompletedEventArgs e)
     {
         _finished = true;
+        _progressCheckTimer?.Stop();
+        if (_cancel || e.Cancelled) return;
+        if (e.Error != null) { ShowError(); return; }
         if (!_cancel)
         {
-            ZipFile.ExtractToDirectory(_file, Path.Combine(_directory, "extract"));
+            try
+            {
+                ZipFile.ExtractToDirectory(_file, Path.Combine(_directory, "extract"));
+                if (!File.Exists(Path.Combine(_directory, "extract", "installer.exe")))
+                    throw new InvalidDataException("安装包中缺少 installer.exe。");
+            }
+            catch (Exception)
+            {
+                ShowError();
+                return;
+            }
 
             Thread.Sleep(400);
 
@@ -324,13 +313,13 @@ public partial class MainWindow : Window
             {
                 while (IsDCSRunning())
                     MessageBox.Show(
-                        "Please Close DCS \n\nSRS cannot be installed - please close DCS before hitting OK \n\n",
-                        "Close DCS",
+                        "无法安装 SRS。请先关闭 DCS，再点击确定。",
+                        "请关闭 DCS",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 var releaseNotes = MessageBox.Show(
-                    "Do you want to read the release notes? \n\nHighly recommended before installing! \n\n",
-                    "Read Release Notes?",
+                    "是否查看版本说明？建议安装前阅读版本说明。",
+                    "查看版本说明",
                     MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                 if (releaseNotes == MessageBoxResult.Yes)
@@ -340,6 +329,7 @@ public partial class MainWindow : Window
                 }
             }
 
+            QuitSimpleRadio();
             var procInfo = new ProcessStartInfo();
             procInfo.WorkingDirectory = Path.Combine(_directory, "extract");
             if (ServerInstall())
@@ -383,12 +373,14 @@ public partial class MainWindow : Window
 
     private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
+        _lastProgressAt = DateTime.UtcNow;
         DownloadProgress.Value = e.ProgressPercentage;
     }
 
     private void CancelButtonClick(object sender, RoutedEventArgs e)
     {
         _cancel = true;
+        _downloadClient?.CancelAsync();
         Close();
     }
 
@@ -396,5 +388,7 @@ public partial class MainWindow : Window
     {
         _cancel = true;
         _progressCheckTimer?.Stop();
+        _downloadClient?.CancelAsync();
+        _downloadClient?.Dispose();
     }
 }
